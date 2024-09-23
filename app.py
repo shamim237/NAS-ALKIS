@@ -59,13 +59,19 @@ output_path = st.text_input("Output Path", placeholder="Enter the output directo
 # Button to start the conversion process
 if st.button("Start Conversion"):
     if xml_file is not None and output_path:
-        # Save the uploaded XML file to a temporary location
-        xml_file_path = os.path.join(output_path, xml_file.name)
-        with open(xml_file_path, "wb") as f:
-            f.write(xml_file.getbuffer())
+        try:
+            # Ensure the output directory exists
+            os.makedirs(output_path, exist_ok=True)
+            
+            # Save the uploaded XML file to the specified location
+            xml_file_path = os.path.join(output_path, xml_file.name)
+            with open(xml_file_path, "wb") as f:
+                f.write(xml_file.getbuffer())
 
-        # Process the files
-        result = process_files(xml_file_path, output_path)
-        st.text(result)
+            # Process the files
+            result = process_files(xml_file_path, output_path)
+            st.text(result)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
     else:
         st.error("Please upload an XML file and specify the output path.")
